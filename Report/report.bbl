@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{4}
+Phillip Isola Alexei A.~Efros Jun-Yan~Zhu, Taesung~Park.
+\newblock Unpaired image-to-image translation using cycle-consistent
+  adversarial networks.
+\newblock {\em arXiv:1703.10593}, 2017.
+
+\bibitem{1}
+Matthias~Bethge Leon A.~Gatys, Alexander S.~Ecker.
+\newblock Image style transfer using convolutional neural networks.
+\newblock {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, 2016.
+
+\bibitem{7}
+Jung Y. Kim S. Lee~I. Oh, S. and N.~Kang.
+\newblock Deep generative design: Integration of topology optimization and
+  generative models.
+\newblock 2019.
+
+\bibitem{2}
+K.~Simonyan and A.~Zisserman.
+\newblock Very deep convolutional networks for large-scale image recognition.
+\newblock {\em arXiv:1409.1556}, 2014.
+
+\bibitem{6}
+Rujie Yin.
+\newblock Content aware neural style transfer, 2016.
+
+\end{thebibliography}

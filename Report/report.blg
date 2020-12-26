@@ -1,0 +1,101 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: report.aux
+The style file: plain.bst
+Database file #1: biblio.bib
+You're missing a field name---line 13 of file biblio.bib
+ :     
+ :     %volume  = "14",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 29 of file biblio.bib
+ : 
+ : %    author = "Goodfellow, et al",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You're missing a field name---line 37 of file biblio.bib
+ : 
+ : %    author = {Krizhevsky, Alex and Sutskever, Ilya and Hinton, Geoffrey E.},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 52 of file biblio.bib
+ :       
+ :       eprint={1601.04568},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 59 of file biblio.bib
+ :     
+ :     journal = "ASME. J. Mech. Des. November 2019; 141(11): 111405. https://doi.org/10.1115/1.4044229."
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Name 1 in "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." has a comma at the end for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Jun-Yan Zhu, Taesung Park, Phillip Isola, Alexei A. Efros" for entry 4
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Jun-Yan Zhu, Taesung Park, Phillip Isola, Alexei A. Efros" for entry 4
+while executing---line 1090 of file plain.bst
+Name 1 in "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." has a comma at the end for entry 7
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Oh, S., Jung, Y., Kim, S., Lee, I., and Kang, N." for entry 7
+while executing---line 1090 of file plain.bst
+Warning--empty journal in 7
+You've used 5 entries,
+            2118 wiz_defined-function locations,
+            517 strings with 4635 characters,
+and the built_in function-call counts, 1104 in all, are:
+= -- 102
+> -- 47
+< -- 0
++ -- 19
+- -- 14
+* -- 48
+:= -- 208
+add.period$ -- 14
+call.type$ -- 5
+change.case$ -- 22
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 47
+empty$ -- 91
+format.name$ -- 14
+if$ -- 221
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 4
+newline$ -- 27
+num.names$ -- 10
+pop$ -- 29
+preamble$ -- 1
+purify$ -- 17
+quote$ -- 0
+skip$ -- 38
+stack$ -- 0
+substring$ -- 25
+swap$ -- 4
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 1
+while$ -- 10
+width$ -- 6
+write$ -- 49
+(There were 19 error messages)
