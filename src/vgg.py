@@ -29,14 +29,14 @@ class VGG19(nn.Module):
             for param in self.parameters():
                 param.requires_grad = False
 
-        self.slices_name = ['relu1_2', 'relu2_2', 'relu3_4', 'relu4_4', 'relu5_4',]
+        self.slices_name = ['relu1_2', 'relu2_2', 'relu3_4', 'relu4_4', 'relu5_4']
         vgg_pretrained_features = models.vgg19(pretrained=True, progress=show_progress).features
 
         # as specified in the paper, we use the fourth layer to represent content
         self.content_feature_maps_index = layers.index('relu4_4')
         # all layers are used for style representation except relu4_4
-        self.style_feature_maps_indices = [layers.index(slices_name[i]) for i in range(len(slices_name))]
-        self.style_feature_maps_indices.remove(layers.index('relu4_4'))  # relu4_4
+        self.style_feature_maps_indices = [layers.index(self.slices_name[i]) for i in range(len(self.slices_name))]
+        self.style_feature_maps_indices.remove(self.layers.index('relu4_4'))  # relu4_4
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
         self.slice3 = torch.nn.Sequential()
@@ -72,9 +72,9 @@ class VGG19(nn.Module):
         slice4 = x
         x = self.slice5(x)
         slice5 = x
-        vgg_outputs = namedtuple("VGG19Outputs", self.slices_name)
-        output = vgg_outputs(slice1, slice2, slice3, slice4, slice5)
-        return output
+        #vgg_outputs = namedtuple("VGG19Outputs", self.slices_name)
+        #output = vgg_outputs(slice1, slice2, slice3, slice4, slice5)
+        return (slice1, slice2, slice3, slice5, slice4)#output
 
 """  
 def net_relu(path, input_image):
