@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aa4b0eb5-01cc-45cf-883e-4aa20fb1fd81" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vgg.py" beforeDir="false" afterPath="$PROJECT_DIR$/vgg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,13 +59,21 @@
       <option name="project" value="LOCAL" />
       <updated>1609182302905</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="train added&#10;some issues with the image processing">
+      <created>1609364484659</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1609364484659</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="src added" />
     <MESSAGE value="vgg almost done" />
-    <option name="LAST_COMMIT_MESSAGE" value="vgg almost done" />
+    <MESSAGE value="train added&#10;some issues with the image processing" />
+    <option name="LAST_COMMIT_MESSAGE" value="train added&#10;some issues with the image processing" />
   </component>
 </project>

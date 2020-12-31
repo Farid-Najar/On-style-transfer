@@ -34,7 +34,7 @@ def imload(path, image_name):
 
 def imshow(img):
     # convert torch tensor to PIL image and then show image inline.
-    img=toImage(img[0].data*0.5+0.5) # denormalize tensor before convert
+    img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     plt.imshow(img,aspect=None)
     plt.axis('off')
     plt.gcf().set_size_inches(8, 8)
@@ -42,7 +42,7 @@ def imshow(img):
 
 def imsave(img,path):
     # convert torch tensor to PIL image and then save to path
-    img=toImage(img[0].data*0.5+0.5) # denormalize tensor before convert
+    img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     img.save(path)
 
 def train(artist_name, style_target):
