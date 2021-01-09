@@ -12,27 +12,33 @@ from PIL import Image
 from datetime import datetime
 
 DATA_PATH = '~/On-style-transfer/data/datasets/'
+IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-class GramMatrix(nn.Module):
-    def forward(self,style_features):
-        gram_features=[]
-        for feature in style_features:
-            n,f,h,w = feature.size()
-            feature = feature.resize(n*f,h*w)
-            gram_features.append((feature@feature.t()).div_(2*n*f*h*w))
-        return gram_features
+def gram(x, normalize=True):
+    (b, ch, h, w) = x.size()
+    features = x.view(b, ch, w * h)
+    features_t = features.transpose(1, 2)
+    res = features.bmm(features_t)
+    if normalize:
+        res /= ch * h * w
+    return res
 
-def imload(path, image_name):
+def total_variation(y):
+    return torch.sum(torch.abs(y[:, :, :, :-1] - y[:, :, :, 1:])) + \
+           torch.sum(torch.abs(y[:, :, :-1, :] - y[:, :, 1:, :]))
+
+def load_img(path):
     # a function to load image and transfer to Pytorch Variable.
-    image = Image.open(path+image_name)
+    image = Image.open(path)
     transform = transforms.Compose([
         transforms.ToTensor(),#Converts (H x W x C) of[0, 255] to (C x H x W) of range [0.0, 1.0].
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),])
-    image = Variable(transform(image), volatile=True)
+        transforms.Normalize(mean = IMAGENET_MEAN_255, std = (1, 1, 1)),])
+    image = Variable(transform(image).to(DEVICE), volatile=True)
     image = image.unsqueeze(0)
     return image
 
-def imshow(img):
+def show_img(img):
     # convert torch tensor to PIL image and then show image inline.
     img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     plt.imshow(img,aspect=None)
@@ -40,14 +46,14 @@ def imshow(img):
     plt.gcf().set_size_inches(8, 8)
     plt.show()
 
-def imsave(img,path):
+def save_img(img,path):
     # convert torch tensor to PIL image and then save to path
     img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     img.save(path)
 
 def train(artist_name, style_target):
     content_path = DATA_PATH+f'{artist_name.lower()}2photo/trainB'
-    style_image = imload(DATA_PATH+f'{artist_name.lower()}2photo/trainA', style_target)
+    style_image = load_img(DATA_PATH+f'{artist_name.lower()}2photo/trainA', style_target)
     #learning parameters
     learning_rate = 1e-2
     #the values are arbitrary. Most important is the proportion between them
