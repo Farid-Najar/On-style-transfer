@@ -24,10 +24,27 @@ def gram(x, normalize=True):
         res /= ch * h * w
     return res
 
+def loss(net, training_img, features, content_weight, style_weight, w):
+    *style_features, content_feature = features
+    training_img_features = net(training_img)
+    training_img_content_feature = training_img_features[-1].squeeze(axis=0)
+
+    content_loss = nn.MSELoss(reduction='sum')(content_feature, training_img_content_feature)/2
+
+    training_img_style_features = [gram(style_features[i]) for i in range(len(style_features))]
+    style_loss = 0.
+    
+    for i in range(len(style_features)):
+        style_loss += w[i]*nn.MSELoss(reduction='mean')(style_features[i][0], training_img_style_features[i][0])
+    style_loss /= len(style_features)
+
+    return content_weight*content_loss + style_weight*style_loss
+
+"""
 def total_variation(y):
     return torch.sum(torch.abs(y[:, :, :, :-1] - y[:, :, :, 1:])) + \
            torch.sum(torch.abs(y[:, :, :-1, :] - y[:, :, 1:, :]))
-
+"""
 def load_img(path):
     # a function to load image and transfer to Pytorch Variable.
     image = Image.open(path)
@@ -51,9 +68,9 @@ def save_img(img,path):
     img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     img.save(path)
 
-def train(artist_name, style_target):
-    content_path = DATA_PATH+f'{artist_name.lower()}2photo/trainB'
-    style_image = load_img(DATA_PATH+f'{artist_name.lower()}2photo/trainA', style_target)
+def train(artist_name, style_target, content_target):
+    style_img = load_img(style_target)
+    content_img = load_img(content_target)
     #learning parameters
     learning_rate = 1e-2
     #the values are arbitrary. Most important is the proportion between them
@@ -71,23 +88,16 @@ def train(artist_name, style_target):
     train_img = Variable(torch.randn(content_img.size()),requires_grad = True)
     #we crerate the L-BFGS optimizer as suggested in the paper
     optimizer = optim.LBFGS([train_img], lr = learning_rate, history_size=50)
-    L2loss = nn.MSELoss(size_average=False)
     net = vgg.VGG19()
 
     for _ in range(num_iters):
         optimizer.zero_grad()
+        
+        l = loss(net, training_img, features=None, content_weight=content_weight, style_weight=style_weight)
+        loss_list.append(l)
+        l.backward()
 
-        *style_features, content_features = net.forward(train_img)
         # compute total loss
-        style_loss = [L2loss(style_features[i],style_refs[i]) for i in range(len(style_features))]
-        #a small trick to balance the influnce of diffirent style layer
-        mean_loss = sum(style_loss).data[0]/len(style_features)
-
-        style_loss = sum([(mean_loss/l.data[0])*l*STYLE_LAYER_WEIGHTS[i]
-                          for i,l in enumerate(style_loss)])/len(style_features)
-
-        content_loss = sum([l2loss(content_features[i],content_refs[i])
-                            for i in range(len(content_refs))])/len(content_refs)
         total_loss = style_weight*style_loss+content_weight*content_loss
         total_loss.backward()
 
@@ -96,3 +106,5 @@ def train(artist_name, style_target):
             best_img = train_img
 
         optimizer.step()
+
+    save_img(train_img, save_path)

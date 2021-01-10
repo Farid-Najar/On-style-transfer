@@ -1,5 +1,6 @@
 from collections import namedtuple
 import torch
+from torch import nn
 from torchvision import models
 
 #VGG_FILE = 'imagenet-vgg-verydeep-19.mat'
