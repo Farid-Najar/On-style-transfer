@@ -50,7 +50,8 @@ def load_img(path):
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean = IMAGENET_MEAN_255, std = (1, 1, 1)),])
-    image = Variable(transform(image).to(DEVICE), volatile=True)
+    with torch.no_grad():
+        image = Variable(transform(image).to(DEVICE))
     image = image.unsqueeze(0)
     return image
 
@@ -97,23 +98,23 @@ def train(style_target, content_target):
     content_img_features = net(content_img)[-1].squeeze(axis=0)
     del style_img, content_img
 
-
+    if torch.is_grad_enabled() :
+        optimizer.zero_grad()
     for _ in range(num_iters):
         def closure ():
-            optimizer.zero_grad()
-
             l = loss(net, train_img, style_features=style_img_features, content_feature=content_img_features,
                  content_weight=content_weight, style_weight=style_weight, w=[1 for _ in range(len(style_img_features))])
             loss_list.append(l)
             l.backward(retain_graph=True)
+            optimizer.zero_grad()
             return l
         try:
-            optimizer.step()#closure)
+            optimizer.step(closure)
 
             if min_loss > loss_list[-1]:
                 min_loss = loss_list[-1]
                 best_img = train_img
-        except :
+        except O:
             break
 
     save_img(best_img, save_path)
