@@ -5,6 +5,8 @@ from torchvision import models
 
 #VGG_FILE = 'imagenet-vgg-verydeep-19.mat'
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
+DEVICE = torch.device('cpu')#'cuda' if torch.cuda.is_available() else 'cpu')
+
 
 class VGG19(nn.Module):
 
@@ -30,14 +32,14 @@ class VGG19(nn.Module):
             for param in self.parameters():
                 param.requires_grad = False
 
-        self.slices_name = ['relu1_2', 'relu2_2', 'relu3_4', 'relu4_4', 'relu5_4']
+        #self.slices_name = ['relu1_2', 'relu2_2', 'relu3_4', 'relu4_4', 'relu5_4']
         vgg_pretrained_features = models.vgg19(pretrained=True, progress=show_progress).features
 
         # as specified in the paper, we use the fourth layer to represent content
-        self.content_feature_maps_index = layers.index('relu4_4')
+        #self.content_feature_maps_index = self.layers.index('relu4_4')
         # all layers are used for style representation except relu4_4
-        self.style_feature_maps_indices = [layers.index(self.slices_name[i]) for i in range(len(self.slices_name))]
-        self.style_feature_maps_indices.remove(self.layers.index('relu4_4'))  # relu4_4
+        #self.style_feature_maps_indices = [self.layers.index(self.slices_name[i]) for i in range(len(self.slices_name))]
+        #self.style_feature_maps_indices.remove(self.layers.index('relu4_4'))  # relu4_4
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
         self.slice3 = torch.nn.Sequential()

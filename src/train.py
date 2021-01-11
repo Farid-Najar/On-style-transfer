@@ -13,9 +13,12 @@ from datetime import datetime
 
 DATA_PATH = '~/On-style-transfer/data/datasets/'
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device('cpu')#'cuda' if torch.cuda.is_available() else 'cpu')
 
 def gram(x, normalize=True):
+    #print('###########################################################')
+    #print(f"gram fun : x.size() = {x.size()}")
+    #print('###########################################################')
     (b, ch, h, w) = x.size()
     features = x.view(b, ch, w * h)
     features_t = features.transpose(1, 2)
@@ -24,32 +27,28 @@ def gram(x, normalize=True):
         res /= ch * h * w
     return res
 
-def loss(net, training_img, features, content_weight, style_weight, w):
-    *style_features, content_feature = features
+def loss(net, training_img, style_features, content_feature, content_weight, style_weight, w):
     training_img_features = net(training_img)
-    training_img_content_feature = training_img_features[-1].squeeze(axis=0)
-
-    content_loss = nn.MSELoss(reduction='sum')(content_feature, training_img_content_feature)/2
-
-    training_img_style_features = [gram(style_features[i]) for i in range(len(style_features))]
+    #print('###########################################################')
+    #print(f"loss fun : features size = {len(training_img_features[0].size())}")
+    #print('###########################################################')
+    training_img_style_features = [gram(training_img_features[i]) for i in range(len(style_features))]
     style_loss = 0.
-    
+
     for i in range(len(style_features)):
         style_loss += w[i]*nn.MSELoss(reduction='mean')(style_features[i][0], training_img_style_features[i][0])
     style_loss /= len(style_features)
 
+    training_img_content_feature = training_img_features[-1].squeeze(axis=0)
+    content_loss = nn.MSELoss(reduction='sum')(content_feature, training_img_content_feature)/2
+
     return content_weight*content_loss + style_weight*style_loss
 
-"""
-def total_variation(y):
-    return torch.sum(torch.abs(y[:, :, :, :-1] - y[:, :, :, 1:])) + \
-           torch.sum(torch.abs(y[:, :, :-1, :] - y[:, :, 1:, :]))
-"""
+
 def load_img(path):
-    # a function to load image and transfer to Pytorch Variable.
     image = Image.open(path)
     transform = transforms.Compose([
-        transforms.ToTensor(),#Converts (H x W x C) of[0, 255] to (C x H x W) of range [0.0, 1.0].
+        transforms.ToTensor(),
         transforms.Normalize(mean = IMAGENET_MEAN_255, std = (1, 1, 1)),])
     image = Variable(transform(image).to(DEVICE), volatile=True)
     image = image.unsqueeze(0)
@@ -68,7 +67,7 @@ def save_img(img,path):
     img=transforms.ToPILImage()(img[0].data*0.5+0.5) # denormalize tensor before convert
     img.save(path)
 
-def train(artist_name, style_target, content_target):
+def train(style_target, content_target):
     style_img = load_img(style_target)
     content_img = load_img(content_target)
     #learning parameters
@@ -77,34 +76,42 @@ def train(artist_name, style_target, content_target):
     style_weight = 1
     content_weight = 1e-3
     #number of iterations or epoch
-    num_iters = 500
-    save_path='saver/fns.ckpt'
+    num_iters = 2000
+    save_path='../outputs/result.jpg'
+
+    #we make a random image to train
+    train_img = Variable(torch.randn(content_img.size(), device = DEVICE),requires_grad = True)
 
     #tracers
     loss_list = []
     min_loss = float("inf")
+    best_img = train_img
 
-    #we make a random image to train
-    train_img = Variable(torch.randn(content_img.size()),requires_grad = True)
     #we crerate the L-BFGS optimizer as suggested in the paper
-    optimizer = optim.LBFGS([train_img], lr = learning_rate, history_size=50)
-    net = vgg.VGG19()
+    optimizer = optim.Adam([train_img], lr = learning_rate)#optim.LBFGS([train_img], lr = learning_rate, history_size=20)
+    net = vgg.VGG19().to(DEVICE)
+
+    #We extract features from style image and content image
+    *forwarded_style_img, _ = net(style_img)
+    style_img_features = [gram(forwarded_style_img[i]) for i in range(len(forwarded_style_img))]
+    content_img_features = net(content_img)[-1].squeeze(axis=0)
+
 
     for _ in range(num_iters):
-        optimizer.zero_grad()
-        
-        l = loss(net, training_img, features=None, content_weight=content_weight, style_weight=style_weight)
-        loss_list.append(l)
-        l.backward()
+        def closure ():
+            optimizer.zero_grad()
 
-        # compute total loss
-        total_loss = style_weight*style_loss+content_weight*content_loss
-        total_loss.backward()
+            l = loss(net, train_img, style_features=style_img_features, content_feature=content_img_features,
+                 content_weight=content_weight, style_weight=style_weight, w=[1 for _ in range(len(style_img_features))])
+            loss_list.append(l)
+            l.backward(retain_graph=True)
+            return l
 
-        if min_loss > loss_history[-1]:
-            min_Loss = loss_history[-1]
+        optimizer.step(closure)
+
+        if min_loss > loss_list[-1]:
+            min_loss = loss_list[-1]
             best_img = train_img
 
-        optimizer.step()
-
-    save_img(train_img, save_path)
+    save_img(best_img, save_path)
+    return loss_list
