@@ -5,7 +5,7 @@ from torchvision import models
 
 #VGG_FILE = 'imagenet-vgg-verydeep-19.mat'
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
-DEVICE = torch.device('cpu')#'cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class VGG19(nn.Module):

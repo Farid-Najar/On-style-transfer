@@ -13,7 +13,7 @@ from datetime import datetime
 
 DATA_PATH = '~/On-style-transfer/data/datasets/'
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
-DEVICE = torch.device('cpu')#'cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def gram(x, normalize=True):
     #print('###########################################################')
@@ -95,6 +95,7 @@ def train(style_target, content_target):
     *forwarded_style_img, _ = net(style_img)
     style_img_features = [gram(forwarded_style_img[i]) for i in range(len(forwarded_style_img))]
     content_img_features = net(content_img)[-1].squeeze(axis=0)
+    del style_img, content_img
 
 
     for _ in range(num_iters):
@@ -106,12 +107,14 @@ def train(style_target, content_target):
             loss_list.append(l)
             l.backward(retain_graph=True)
             return l
+        try:
+            optimizer.step()#closure)
 
-        optimizer.step(closure)
-
-        if min_loss > loss_list[-1]:
-            min_loss = loss_list[-1]
-            best_img = train_img
+            if min_loss > loss_list[-1]:
+                min_loss = loss_list[-1]
+                best_img = train_img
+        except :
+            break
 
     save_img(best_img, save_path)
     return loss_list
