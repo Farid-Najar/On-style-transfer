@@ -11,7 +11,7 @@ from PIL import Image
 #from datetime import datetime
 
 DATA_PATH = '~/On-style-transfer/data/datasets/'
-IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
+#IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def gram(x, normalize=True):
@@ -50,7 +50,7 @@ def load_img(path):
     image = Image.open(path)
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean = IMAGENET_MEAN_255, std = (1, 1, 1)),])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),]) #recommanded by pytorch source=https://pytorch.org/docs/stable/torchvision/models.html
     with torch.no_grad():
         image = Variable(transform(image).to(DEVICE))
     image = image.unsqueeze(0)
