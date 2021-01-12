@@ -35,7 +35,9 @@ def loss(net, training_img, style_features, content_feature, content_weight, sty
     style_loss = 0.
 
     for i in range(len(style_features)):
-        style_loss += w[i]*nn.MSELoss(reduction='mean')(style_features[i][0], training_img_style_features[i][0])
+        #N, M = style_features[i][0].shape
+        #print(N, M)
+        style_loss += w[i]*nn.MSELoss(reduction='sum')(style_features[i][0], training_img_style_features[i][0])#/((N**2)*(M**2))
     style_loss /= len(style_features)
 
     training_img_content_feature = training_img_features[-1].squeeze(axis=0)
