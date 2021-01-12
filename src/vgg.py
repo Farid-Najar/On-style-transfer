@@ -79,6 +79,56 @@ class VGG19(nn.Module):
         #output = vgg_outputs(slice1, slice2, slice3, slice4, slice5)
         return (slice1, slice2, slice3, slice5, slice4)#output
 
+class VGG16(nn.Module):
+
+    def __init__(self, requires_grad=False, show_progress=False):
+        super(VGG16, self).__init__()
+
+        if not requires_grad:
+            for param in self.parameters():
+                param.requires_grad = False
+
+        vgg_pretrained_features = models.vgg16(pretrained=True, progress=show_progress).features
+
+        self.slice1 = torch.nn.Sequential()
+        self.slice2 = torch.nn.Sequential()
+        self.slice3 = torch.nn.Sequential()
+        self.slice4 = torch.nn.Sequential()
+        #self.slice5 = torch.nn.Sequential()
+
+        #from 'conv1_1' to 'relu1_2'
+        for i in range(4):
+            self.slice1.add_module(str(i), vgg_pretrained_features[i])
+        #from 'pool1' to 'relu2_2'
+        for i in range(4, 9):
+            self.slice2.add_module(str(i), vgg_pretrained_features[i])
+        #from 'pool2' to 'relu3_4'
+        for i in range(9, 16):
+            self.slice3.add_module(str(i), vgg_pretrained_features[i])
+        #from 'pool3' to 'relu4_4'
+        for i in range(16, 23):
+            self.slice4.add_module(str(i), vgg_pretrained_features[i])
+        #from 'pool4' to 'relu5_4'
+        #for i in range(27, 36):
+        #    self.slice5.add_module(self.layers[i], vgg_pretrained_features[i])
+
+
+
+    def forward(self, input_image):
+        x = self.slice1(input_image)
+        slice1 = x
+        x = self.slice2(x)
+        slice2 = x
+        x = self.slice3(x)
+        slice3 = x
+        x = self.slice4(x)
+        #slice4 = x
+        #x = self.slice5(x)
+        #slice5 = x
+        #vgg_outputs = namedtuple("VGG19Outputs", self.slices_name)
+        #output = vgg_outputs(slice1, slice2, slice3, slice4, slice5)
+        return (slice1, slice2, x, slice3)#, slice5, slice4)#output
+
 """  
 def net_relu(path, input_image):
     Gives the VGG network using relu as activation function

@@ -5,11 +5,10 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import vgg
-import os
-import numpy as np
-import matplotlib.pyplot as plt
+#import os
+#import numpy as np
 from PIL import Image
-from datetime import datetime
+#from datetime import datetime
 
 DATA_PATH = '~/On-style-transfer/data/datasets/'
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
@@ -88,9 +87,9 @@ def train(style_target, content_target):
     min_loss = float("inf")
     best_img = train_img
 
-    #we crerate the L-BFGS optimizer as suggested in the paper
-    optimizer = optim.Adam([train_img], lr = learning_rate)#optim.LBFGS([train_img], lr = learning_rate, history_size=20)
-    net = vgg.VGG19().to(DEVICE)
+    #we crerate the L-BFGS/Adam optimizer as suggested in the paper
+    optimizer = optim.Adam([train_img], lr = learning_rate)#, history_size=20)
+    net = vgg.VGG16().to(DEVICE)
 
     #We extract features from style image and content image
     *forwarded_style_img, _ = net(style_img)
@@ -98,23 +97,25 @@ def train(style_target, content_target):
     content_img_features = net(content_img)[-1].squeeze(axis=0)
     del style_img, content_img
 
-    if torch.is_grad_enabled() :
-        optimizer.zero_grad()
-    for _ in range(num_iters):
+    #if torch.is_grad_enabled() :
+    optimizer.zero_grad()
+    for counter in range(num_iters):
         def closure ():
             l = loss(net, train_img, style_features=style_img_features, content_feature=content_img_features,
-                 content_weight=content_weight, style_weight=style_weight, w=[1 for _ in range(len(style_img_features))])
+                 content_weight=content_weight, style_weight=style_weight, w=[i for i in range(len(style_img_features))])
             loss_list.append(l)
             l.backward(retain_graph=True)
             optimizer.zero_grad()
             return l
         try:
             optimizer.step(closure)
-
             if min_loss > loss_list[-1]:
                 min_loss = loss_list[-1]
                 best_img = train_img
-        except O:
+        except :
+            print('###########################################################')
+            print(f'we did {counter} iterations.')
+            print('###########################################################')
             break
 
     save_img(best_img, save_path)
